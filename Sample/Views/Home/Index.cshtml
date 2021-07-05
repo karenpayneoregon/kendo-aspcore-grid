@@ -1,0 +1,42 @@
+@{
+	ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-xs-18 col-md-12">
+
+        @(Html.Kendo().Grid<Sample.Models.OrderViewModel>()
+            .Name("grid")
+            .Columns(columns =>
+            {
+                columns.Select().Title("Select Main Location").Width(50).HeaderHtmlAttributes(new {style = "pointer-events:none"});
+                columns.Bound(p => p.OrderID).Filterable(false);
+                columns.Bound(p => p.Freight);
+                columns.Bound(p => p.OrderDate).Format("{0:MM/dd/yyyy}");
+                columns.Bound(p => p.ShipName);
+                columns.Bound(p => p.ShipCity);
+                columns.Command(command =>
+                {
+                    command.Edit();
+                    command.Destroy();
+                }).Width(250);
+            })
+            .ToolBar(toolbar => toolbar.Create())
+            .Pageable()
+            .Editable(editable => editable.Mode(GridEditMode.PopUp).Window(w =>
+                w.Title("Create/Edit Location").Height(600).Width(440).Scrollable(true)))
+            .Sortable(Sortable => Sortable.AllowUnsort(true))
+            .Scrollable()
+            .Filterable()
+            .HtmlAttributes(new {style = "height:550px;"})
+            .DataSource(dataSource => dataSource
+                .Ajax()
+                .PageSize(20)
+                .Model(m => m.Id(id => id.OrderID))
+                .Read(read => read.Action("Orders_Read", "Grid"))
+                .Update(u => u.Action("Orders_Update", "Grid"))
+                .Create(c => c.Action("Orders_Create", "Grid"))
+            )
+            )
+    </div>
+</div>
